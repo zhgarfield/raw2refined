@@ -305,7 +305,7 @@ This consistent structure ensures that datasets are easy to understand and manip
 "Tidy datasets are all alike but every messy dataset is messy in its own way." - Hadley Wickam
 
 <div class="figure" style="text-align: center">
-<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/Hadley-wickham2016-02-04.jpg" alt="Hadley Wickham" width="30%" />
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/Hadley-wickham2016-02-04.jpg" alt="Hadley Wickham" width="30%" />
 <p class="caption">Hadley Wickham</p>
 </div>
 <br>
@@ -662,18 +662,20 @@ table2
 ```
 
 Why is `table2` untidy?
-Does each variable have its own column?<summary>Answer</summary>
-  <p>No. The type column contains two variables: cases and population.
-These should instead be stored as two separate columns: one for cases and one for population.</p>
+
+* Does each variable have its own column?<details><summary>Answer</summary>
+  <p>No. The type column contains two variables: cases and population. These should instead be stored as two separate columns: one for cases and one for population.</p>
 </details>
 
-Does each observation have its own row?<summary>Answer</summary>
-  <p>No. Observations (country-year) are split across multiple rows because the type column separates the attributes.
-Each country-year should occupy a single row.</p>
+
+* Does each observation have its own row? <details><summary>Answer</summary>
+  <p>No. Observations (country-year) are split across multiple rows because the type column separates the attributes.Each country-year should occupy a single row.
+</p>
 </details>
 
-Does each value have its own cell?<summary>Answer</summary>
-  <p>Yes. The values (745, 19987071, etc.) are stored properly in individual cells.</p>
+* Does each value have its own cell? <details><summary>Answer</summary>
+  <p>Yes. The values (745, 19987071, etc.) are stored properly in individual cells.
+  </p>
 </details>
 
 
@@ -692,9 +694,9 @@ table3
 #> 4 Brazil       2000 80488/174504898  
 ```
 
-How can we tidy this dataset?<summary>Answer</summary>
-  <p>To tidy this dataset, we would need to split the rate column into two separate columns: one for cases and one for population.
-</p>
+How can we tidy this dataset? <details>
+<summary>Answer</summary>
+<p>To tidy this dataset, we would need to split the rate column into two separate columns: one for cases and one for population.</p>
 </details>
 
 *Example 3*: Values Spread Across Columns
@@ -720,7 +722,7 @@ table4b
 #> 3 China       1272915272 1280428583
 ```
 
-How can we tidy this dataset?<summary>Answer</summary>
+How can we tidy this dataset?<details>summary>Answer</summary>
   <p>To tidy this dataset, the `year` columns (`1999`, `2000`) should be gathered into a single column, with their corresponding values moved into a separate column.
 </p>
 </details>
@@ -768,17 +770,17 @@ table2
 
 Answers to these questions:
 
-1. Does each variable have its own column? <summary>Answer</summary>
+1. Does each variable have its own column? <details><summary>Answer</summary>
   <p>No. The type column combines two variables: `cases` and `population`.
 </p>
 </details>
 
-2. Does each observation have its own row?<summary>Answer</summary>
+2. Does each observation have its own row?<details><summary>Answer</summary>
   <p>No. Each `country-year` observation is split across two rows.
 </p>
 </details>
 
-3. Does each value  have its own cell?<summary>Answer</summary>
+3. Does each value  have its own cell?<details><summary>Answer</summary>
   <p>Yes. Individual values (`745`, `19987071`, etc.) are stored correctly.
 </p>
 </details>
