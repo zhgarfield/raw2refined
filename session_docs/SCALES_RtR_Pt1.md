@@ -2,7 +2,7 @@
 title: "From Raw to Refined: Tidy Data in R"
 subtitle:  "Session 1: Principles and Practices of Tidy Data"
 author: Pr. Z. Garfield
-date: 28 January 2025 
+date:
 urlcolor: blue
 output: 
   html_document:
