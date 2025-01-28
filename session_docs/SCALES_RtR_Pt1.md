@@ -88,11 +88,16 @@ You will need to be able to access these key strokes on your computer
     
 ### Script file 
 
+Go to the [GitHub repository](https://github.com/zhgarfield/raw2refined) for the workshop (search "zhgarfield" "raw2refined"). Click on "scripts". Right click on "r2r_session1_student_script.R" and save scrit file. 
+
+Pro tip: Or you can clone the repository in R Studio ?!?
+
 <div class="figure" style="text-align: center">
 <img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/r2r_script_location.png" alt="Location of script file for this session" width="100%" />
 <p class="caption">Location of script file for this session</p>
 </div>
 <br>
+
     
 ### Other resources
 
