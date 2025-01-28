@@ -86,6 +86,14 @@ You will need to be able to access these key strokes on your computer
 * The pipe operator `%>%`
     * `ctrl + shift + m` or `command + shift + m`
     
+### Script file 
+
+<div class="figure" style="text-align: center">
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/r2r_script_location.png" alt="Location of script file for this session" width="100%" />
+<p class="caption">Location of script file for this session</p>
+</div>
+<br>
+    
 ### Other resources
 
 [R Cheatsheets](https://rstudio.github.io/cheatsheets/) hosted by Posit.
