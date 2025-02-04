@@ -98,7 +98,7 @@ data$value[is.na(data$value)] <- mean(data$value, na.rm = TRUE)
 The `stringr` package helps in handling and manipulating character data. Let's use the `starwars` data set from `dplyr`.
 
 ::: {.figure style="text-align: center"}
-<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/starwards.jpg" alt="A long time ago, in a galaxy far, far away..." width="100%"/>
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/starwars.jpg" alt="A long time ago, in a galaxy far, far away..." width="100%"/>
 
 <p class="A long time ago, in a galaxy far, far away...">
 </p>
