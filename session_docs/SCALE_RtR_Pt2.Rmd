@@ -80,6 +80,7 @@ data$value <- as.numeric(data$value)
 
 # Check missing data
 is.na(data)
+table(data)
 ```
 
 ### Handling Missing Data
@@ -99,7 +100,6 @@ For matrices and data frames, two brackets `[ , ]` are used to specify rows and 
 ```{r, echo=TRUE}
 # Mean substitution
 data$value[is.na(data$value)] <- mean(data$value, na.rm = TRUE)
-
 
 # Omit missing data
 data_complete <- na.omit(data)
