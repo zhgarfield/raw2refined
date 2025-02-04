@@ -6,10 +6,10 @@ author:
     orcid: 0000-0002-1547-1492
     email: zachary.garfield@um6p.ma
     affiliations:
-      - name: Africa Institute for Research in Economics and Social Sciences, University Mohammed VI Polytechnic
-        address:
-        city: Rabat
-        state: Morocco
+      name: Africa Institute for Research in Economics and Social Sciences, University Mohammed VI Polytechnic
+      address:
+      city: Rabat
+      state: Morocco
 date:
 urlcolor: blue
 output: 
@@ -26,7 +26,6 @@ editor_options:
     wrap: 72
 ---
 
-```{=html}
 <style>
   body {
     font-size: 19px; /* Increase the font size here */
@@ -50,7 +49,7 @@ editor_options:
     margin-top: 0.5em;
   }
 </style>
-```
+
 
 # Introduction
 
@@ -128,10 +127,8 @@ Location of script file for this session
 ### Other resources
 
 [R Cheatsheets](https://rstudio.github.io/cheatsheets/) hosted by Posit.
-
-```         
+      
 * See in particular the [tidyr::Cheatsheet](https://rstudio.github.io/cheatsheets/html/tidyr.html) and the [dplyr::Cheatsheet](https://rstudio.github.io/cheatsheets/html/data-transformation.html).
-```
 
 [R for Data Science (2e)](https://r4ds.hadley.nz/)
 

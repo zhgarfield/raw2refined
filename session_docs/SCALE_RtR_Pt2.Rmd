@@ -1,0 +1,143 @@
+---
+title: 'Raw to Refined: Lecture 2'
+author: "Zachary Garfield"
+date: "`r Sys.Date()`"
+output: html_document
+---
+<style>
+  body {
+    font-size: 19px; /* Increase the font size here */
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .figure {
+    text-align: center;
+    margin: 1em auto;
+    max-width: 100%;
+  }
+  .caption {
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 0.5em;
+  }
+</style>
+
+```{r setup, include=FALSE, echo=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Data sets included in `R`
+
+```{r}
+# Datasets included in base R
+library(help = "datasets")
+
+# All datasets included in the packages you have installed
+data(package = .packages(all.available = TRUE))
+```
+
+## Identifying and Handling Missing Data
+
+First, load the tidyverse package
+```{r}
+library(tidyverse)
+library(stringr)
+```
+
+### Identifying Missing Data in R
+
+Missing data can be problematic in analysis, and it is crucial to identify and handle them appropriately. In R, missing data is typically represented as `NA.` However, datasets may encode missing values in other ways, such as `"N/A"`, `"-"`, `"."`, or `999`. We can, and should, convert these into proper `NA `values.
+
+**Checking for Missing Data:**
+
+The `is.na()` function is useful for identifying missing values in a dataset:
+
+```{r, echo=TRUE}
+# Example dataset
+data <- data.frame(
+  id = 1:5,
+  value = c(10, "N/A", 15, "-", 20)
+)
+
+# Convert character encodings of missing values to NA
+data$value[data$value %in% c("N/A", "-")] <- NA
+
+# Convert column to numeric type
+data$value <- as.numeric(data$value)
+
+# Check missing data
+is.na(data)
+```
+
+### Handling Missing Data
+
+There are multiple strategies to handle missing data:
+
+* **Omitting missing data**: Use `na.omit()` to remove rows with NA values. This is often NOT a good idea. It requires knowing your data, where your missing data values are coming from, why they are missing, and what your analytical goals are. 
+
+* **Mean substitution**: Replace missing values with the mean of the non-missing values.
+
+* **Data imputation**: The process of _replacing missing values in a dataset with estimated values_ based on other available data. This helps maintain dataset completeness and reduces bias introduced by missing observations. The process can range from simple methods like replacing missing values with the _mean_, _median_, or _mode_ of a variable to more complex approaches such as _regression imputation_, _k-nearest neighbors (KNN)_, or _multiple imputation_, which use predictive modeling techniques to estimate missing values. The choice of method depends on the nature of the data and the assumptions that can be made about the missing values.
+
+>**Quick Note**: In R, indexing with brackets `[ ]` allows you to access specific elements within vectors, matrices, and data frames. For vectors, a single bracket `[ ]` is used to extract elements by position, logical condition, or name. For example, `x[2]` retrieves the second element of a vector `x`, while `x[x > 5]` returns elements greater than 5.
+For matrices and data frames, two brackets `[ , ]` are used to specify rows and columns. `df[1, 2]` retrieves the value in the first row and second column of `df`, while `df[ , "column_name"]` extracts an entire column by name. Using `df[ , 2]` returns the second column, and `df[1, ]` retrieves the entire first row.
+
+**Example:**
+```{r, echo=TRUE}
+# Mean substitution
+data$value[is.na(data$value)] <- mean(data$value, na.rm = TRUE)
+```
+
+## Recoding Variables
+
+Recoding variables helps in transforming data for better analysis. We can use `mutate()` and `case_when()` from the `dplyr` package.
+
+*Example:*
+```{r}
+# Look at our data
+head(data)
+
+# Recode a qualitative variable `category` from a quantitative variable `value:
+data <- data %>%
+  mutate(category = case_when(
+    value < 10 ~ "Low",
+    value >= 10 & value < 20 ~ "Medium",
+    TRUE ~ "High"
+  ))
+
+# Look at our data
+head(data)
+```
+
+## Using stringr for String Manipulation
+
+The `stringr` package helps in handling and manipulating character data. Let's use the `starwars` data set from `dplyr`.
+
+::: {.figure style="text-align: center"}
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/starwards.jpg" alt="A long time ago, in a galaxy far, far away..." width="100%"/>
+
+<p class="A long time ago, in a galaxy far, far away...">
+</p>
+:::
+
+**Example:**
+```{r}
+glimpse(dplyr::starwars)
+# Remove white spaces
+dplyr::starwars$
+
+# Convert to uppercase
+data$category <- str_to_upper(data$category)
+
+# Conver to lowercase
+```
+
+
+
+
+
