@@ -99,6 +99,10 @@ For matrices and data frames, two brackets `[ , ]` are used to specify rows and 
 ```{r, echo=TRUE}
 # Mean substitution
 data$value[is.na(data$value)] <- mean(data$value, na.rm = TRUE)
+
+
+# Omit missing data
+data_complete <- na.omit(data)
 ```
 
 ## Using stringr for String Manipulation
@@ -172,6 +176,24 @@ starwars <- starwars %>%
 table(starwars$mass_group)
 ```
 
+## Selecting variables
+
+Selecting specific variables from a dataset helps streamline analysis and is useful for keeping your distinct types of data in their own dataframes. The `select()` function from dplyr allows us to extract specific columns from a dataset.
+
+*Example:*
+```{r}
+starwars_data <- starwars
+# Select specific columns
+starwars_data_anthropometrics <- starwars_data %>% 
+  select(name, height, mass) # Select only these specific columns
+print(head(starwars_data_anthropometrics))
+
+# Select columns based on a pattern
+starwars_data_demographics <- starwars_data %>% 
+  select(name, contains("_")) # Selects name and any column that contains an underscore
+print(head(starwars_data_demographics))
+```
+
 
 ## Joining and Merging Data
 
@@ -224,9 +246,9 @@ print(data_inner)
 * Go to the (World Bank website)[https://databank.worldbank.org/] and find a dataset of interest, for example, _World Development Indicators_. 
 
 ::: {.figure style="text-align: center"}
-<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/dplyr-joins.png" alt="Example of types of joins" width="70%"/>
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/worldbankdata.png", alt="WorldBank data", width="100%"/>
 
-<p class="Example of types of joins">
+<p class="WorldBank data">
 </p>
 :::
 
@@ -236,32 +258,60 @@ print(data_inner)
 
 > Click the `i` for operational definition: GDP at purchaser's prices is the sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in the value of the products. It is calculated without making deductions for depreciation of fabricated assets or for depletion and degradation of natural resources. Data are in current U.S. dollars. Dollar figures for GDP are converted from domestic currencies using single year official exchange rates. For a few countries where the official exchange rate does not reflect the rate effectively applied to actual foreign exchange transactions, an alternative conversion factor is used.
 
-* Select two years (e.g., 2023, 2022). 
+* Select one year (e.g., 2023) (or two if you want a challenge!). 
 
 * You might need to click on _Apply changes_.
 
 ::: {.figure style="text-align: center"}
-<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/dplyr-joins.png" alt="Example of types of joins" width="70%"/>
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/selectingworldbankdata.png" alt="Selecting WorldBank data" width="100%"/>
 
-<p class="Example of types of joins">
+<p class="Selecting WorldBank data">
 </p>
 :::
 
 * Download the dataset in CSV format.
 
+::: {.figure style="text-align: center"}
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/exampleworldbankdata.png" alt="Example of downloaded WorldBank data" width="80%"/>
+
+<p class="Example of downloaded WorldBank data">
+</p>
+:::
+
 * Inspect the CSV file
 
 >*Question:* Do you need to do any editing to the CSV file before it is ready to read in to R?
 
-### Step 2: Import data into R
+### Step 2a: Import data into R
 
 * Move your csv file you downloaded into either A) your projects folder you are using, B) the working directory you use in R, or C) be prepared to read that file into R based on where it is located on your machine (i.e., the file location's path). *Protip:* Option A is the easiest, but it requires you to be using Projects in R Studio. 
+
+### Step 2b: Import additional country meta data into R
+
+* Download additional country-level metadata (available (here)[https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv] or [here](https://github.com/zhgarfield/raw2refined/blob/main/data/country_metadata.csv))
+
+    * You can also read the data directly into R given it is hosted on the web:
+    
+```{r}
+url <- "https://raw.githubusercontent.com/zhgarfield/raw2refined/main/data/country_metadata.csv"
+country_metadata <- read.csv(url, stringsAsFactors = FALSE)
+
+# Check the first few rows
+head(country_metadata)
+```
+
+* Merge these two datasets together...but, how and when???
 
 ### Step 3: Tidy your data
 
 **How do these data violate tidy data principles?**
 
 **What do we need to do to make them tidy?**
+    * Do we need to reshape?
+    * Is there missing data to omit?
+    * Do you want to adjust variable names?
+    * Any name changes to make match?
+    * Join?
 
 **Tidy your data!**
 
