@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 *.html
-.DS_Store
+*.DS_Store
+raw2refined.Rproj

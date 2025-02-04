@@ -93,27 +93,6 @@ For matrices and data frames, two brackets `[ , ]` are used to specify rows and 
 data$value[is.na(data$value)] <- mean(data$value, na.rm = TRUE)
 ```
 
-## Recoding Variables
-
-Recoding variables helps in transforming data for better analysis. We can use `mutate()` and `case_when()` from the `dplyr` package.
-
-*Example:*
-```{r}
-# Look at our data
-head(data)
-
-# Recode a qualitative variable `category` from a quantitative variable `value:
-data <- data %>%
-  mutate(category = case_when(
-    value < 10 ~ "Low",
-    value >= 10 & value < 20 ~ "Medium",
-    TRUE ~ "High"
-  ))
-
-# Look at our data
-head(data)
-```
-
 ## Using stringr for String Manipulation
 
 The `stringr` package helps in handling and manipulating character data. Let's use the `starwars` data set from `dplyr`.
@@ -127,17 +106,63 @@ The `stringr` package helps in handling and manipulating character data. Let's u
 
 **Example:**
 ```{r}
-glimpse(dplyr::starwars)
-# Remove white spaces
-dplyr::starwars$
+glimpse(starwars)
 
-# Convert to uppercase
-data$category <- str_to_upper(data$category)
+# Remove white spaces (there are none)
+starwars$name <- trimws(starwars$name)
+starwars$name
 
-# Conver to lowercase
+# Remove only the first the blank space
+starwars$name <- str_remove(starwars$name, " ")
+starwars$name
+
+# Remove ALL the blank spaces
+starwars$name <- str_remove_all(starwars$name, " ")
+starwars$name
+
+# Remove ALL the dashes
+starwars$name <- str_remove_all(starwars$name, "-")
+starwars$name
+
+# Make lowercase
+starwars$name <- str_to_lower(starwars$name)
+starwars$name
 ```
 
+## Recoding Variables
 
+Recoding variables helps in transforming data for better analysis. We can use `mutate()` and `case_when()` from the `dplyr` package.
+
+*Example:*
+```{r}
+# Look at our data
+table(starwars$species)
+
+# Recode a qualitative variable's value labels:
+starwars <- starwars %>%
+  mutate(species = case_when(
+    species != "Human" ~ "NonHuman",
+    species == "Human" ~ "Human"
+  ))
+
+# Look at the recoded data
+table(starwars$species)
+
+# Recode a qualitative variable `mass_group` from a quantitative variable `mass`:
+## Histogram of mass of charachters
+hist(starwars$mass, breaks = 20, xlab = "Mass", main = "Historgram of mass of StarWars charachters")
+abline(v = mean(starwars$mass, na.rm = TRUE), col = "red", lwd = 2)
+
+## Recode mass
+starwars <- starwars %>%
+  mutate(mass_group = case_when(
+    mass < mean(mass, na.rm = TRUE) ~ "BelowMean",
+    mass >= mean(mass, na.rm = TRUE) ~ "AboveMean"
+  ))
+
+## Look at recoded mass data
+table(starwars$mass_group)
+```
 
 
 
