@@ -174,6 +174,16 @@ starwars <- starwars %>%
 
 ## Look at recoded mass data
 table(starwars$mass_group)
+
+
+## If we wanted to rename all the variables:
+df <- tibble("First Name" = c("Alice", "Bob"), "Last Name" = c("Smith", "Jones"))
+
+# Remove spaces and convert to camelCase
+colnames(df) <- str_replace_all(colnames(df), " ", "_")
+colnames(df) <- str_to_lower(colnames(df))
+
+print(df)
 ```
 
 ## Selecting variables
