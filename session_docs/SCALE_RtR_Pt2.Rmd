@@ -243,10 +243,10 @@ print(data_inner)
 
 ### Step 1: Download Data
 
-* Go to the (World Bank website)[https://databank.worldbank.org/] and find a dataset of interest, for example, _World Development Indicators_. 
+* Go to the [World Bank website](https://databank.worldbank.org/) and find a dataset of interest, for example, _World Development Indicators_. 
 
 ::: {.figure style="text-align: center"}
-<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/worldbankdata.png", alt="WorldBank data", width="100%"/>
+<img src="https://raw.githubusercontent.com/zhgarfield/raw2refined/refs/heads/main/images/worldbankdata.png" alt="WorldBank data" width="100%"/>
 
 <p class="WorldBank data">
 </p>
