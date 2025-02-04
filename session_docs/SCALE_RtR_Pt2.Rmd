@@ -1,6 +1,14 @@
 ---
 title: 'Raw to Refined: Lecture 2'
-author: "Zachary Garfield"
+author:
+  - name: Pr. Zachary H. Garfield
+    orcid: 0000-0002-1547-1492
+    email: zachary.garfield@um6p.ma
+    affiliations:
+      name: Africa Institute for Research in Economics and Social Sciences, University Mohammed VI Polytechnic
+      address:
+      city: Rabat
+      state: Morocco
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -165,4 +173,16 @@ table(starwars$mass_group)
 ```
 
 
+## Joining and Merging Data
 
+Merging datasets is a key skill when dealing with real-world data. We will focus on `left_join()` and `inner_join()` from `dplyr.`
+
+*Example:*
+```{r}
+# Example datasets
+data1 <- data.frame(id = 1:3, value = c(10, 20, 30))
+data2 <- data.frame(id = c(2, 3, 4), category = c("A", "B", "C"))
+
+# Left Join
+data_merged <- left_join(data1, data2, by = "id")
+```
