@@ -1,0 +1,613 @@
+---
+title: 'Raw to Refined: Lecture 3: Introduction to Data Visualization with `ggplot2`'
+author:
+  - name: Pr. Zachary H. Garfield
+    orcid: 0000-0002-1547-1492
+    email: zachary.garfield@um6p.ma
+    affiliations:
+      name: Africa Institute for Research in Economics and Social Sciences, University Mohammed VI Polytechnic
+      address:
+      city: Rabat
+      state: Morocco
+date: "`r Sys.Date()`"
+output: html_document
+---
+<style>
+  body {
+    font-size: 19px; /* Increase the font size here */
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .figure {
+    text-align: center;
+    margin: 1em auto;
+    max-width: 100%;
+  }
+  .caption {
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 0.5em;
+  }
+</style>
+
+```{r setup, include=FALSE, echo=TRUE}
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/R/R projects/raw2refined")
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+## What is ggplot2?
+
+`ggplot2` is an R package for creating elegant and flexible data visualizations. It follows the Grammar of Graphics principles, which allow users to build complex plots incrementally by adding layers.
+
+::: {.figure style="text-align: center"}
+<img src="https://ggplot2.tidyverse.org/logo.png" alt="ggplot2 logo" width="40%"/>
+
+<p class="ggplot2 logo">
+</p>
+:::
+
+### Core Concepts of ggplot2
+
+* **Data**: The dataset you are working with.
+
+* **Aesthetics** (aes): The visual properties of the plot (e.g., x, y, color, size, shape).
+
+* **Geometries** (geoms): The type of plot you want (e.g., scatter, bar, histogram).
+
+* **Faceting**: Splitting the data into multiple plots.
+
+* **Themes and Labels**: Customizing the appearance of the plot.
+
+### The Basic Structure of a ggplot Plot
+
+A `ggplot` visualization always follows this basic structure:
+
+`p <- ggplot(data, aes(x, y)) + geom_someplot()`
+
+## Basic ggplots
+
+### Histograms
+
+A **histogram** is a type of data visualization that represents the distribution of a continuous numerical variable. It consists of bins (intervals) along the x-axis and bars whose heights represent the frequency (count) of data points within each bin.
+
+Key Features of a Histogram:
+* The x-axis represents the range of values for the variable.
+* The y-axis represents the frequency (or density) of observations within each bin.
+* Unlike bar charts, which display discrete categories, histograms are used for continuous data.
+
+he number of bins affects the level of detail: too few bins can obscure patterns, while too many bins may create excessive noise.
+
+```{r}
+# Basic histogram in ggplot
+ggplot(starwars, aes(x = mass)) +
+  geom_histogram()
+```
+
+```{r}
+# Setting binwidth to different values
+ggplot(starwars, aes(x = mass)) +
+  geom_histogram(bins = 5)
+
+
+ggplot(starwars, aes(x = mass)) +
+  geom_histogram(bins = 20)
+
+
+ggplot(starwars, aes(x = mass)) +
+  geom_histogram(bins = 30)
+
+ggplot(starwars, aes(x = mass)) +
+  geom_histogram(bins = 50)
+```
+
+
+We can use the `fill` argument to either add color:
+
+```{r}
+ggplot(starwars, aes(x = mass)) + 
+  geom_histogram(bins = 50, fill = "blue") # the fill here needs to go in the geom
+```
+
+or, to differentiate between a qualitaitve variable and produce two overlapping histograms:
+
+```{r}
+ggplot(starwars, aes(x = mass, fill = gender)) + # the fill here needs to go in the `aes` function
+  geom_histogram(bins = 50)
+```
+
+In this case, the _feminine_ and _masculine_ histograms are quite overlapping and hard to read. We can make less dark with the `alpha` function.
+
+```{r}
+ggplot(starwars, aes(x = mass, fill = gender, alpha=.3)) + # the fill here needs to go in the `aes` function
+  geom_histogram(bins = 50)
+```
+
+But we still can't see through the histogram. 
+
+## Density Plot
+
+A **density plot** is a smoothed version of a histogram that estimates the probability density function (PDF) of a continuous variable. Instead of using discrete bins like a histogram, a density plot uses a kernel density estimation (KDE) technique to create a continuous curve that represents the distribution of data.
+
+Key Features of a Density Plot:
+* The x-axis represents the values of the variable.
+* The y-axis represents the estimated density (not frequency counts, as in histograms).
+* The area under the curve sums to 1, making it useful for comparing distributions.
+
+A smoother alternative to histograms, better suited for identifying multiple peaks in the data.
+
+```{r}
+ggplot(starwars, aes(x = mass)) +
+  geom_density(fill = "blue", alpha = 0.4) # here the alpha make the area under the curve more transparent
+```
+
+Here we can see through each plot:
+
+```{r}
+ggplot(starwars, aes(x = mass, fill = gender)) +
+  geom_density(alpha= 0.4) # here the alpha make the area under the curve more transparent
+```
+
+### Ridge Plots (Using ggridges Package)
+
+```{r}
+library(ggridges)
+ggplot(starwars, aes(x = mass, y = gender, fill = gender)) +
+  geom_density_ridges(alpha = 0.6)
+
+```
+
+### Bar Plots
+
+A bar plot (or bar chart) is a type of visualization that represents categorical data using rectangular bars. The height of each bar corresponds to the count or value of the category it represents. Bar plots are useful for comparing frequencies, proportions, or summary statistics across categories.
+
+Key Features of a Bar Plot:
+* The x-axis represents categories (e.g., gender, species, or group labels).
+* The y-axis represents values (e.g., counts, means, or sums).
+* Bars can be grouped or stacked to compare subcategories.
+
+Can display counts (frequency) or summary statistics (e.g., mean values).
+
+```{r}
+ggplot(starwars, aes(x = gender)) +
+  geom_bar(fill = "blue", alpha = 0.6) 
+```
+
+**Example:** Bar Plot with Summary Statistics
+
+If you want to plot the average height per species, you can use `stat = "summary"` to calculate the mean:
+
+```{r}
+ggplot(starwars, aes(x = species, y = height)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "darkgreen") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+```
+
+
+#### Stacked Bar Chart
+
+A stacked bar chart is a variation of the standard bar plot where bars are divided into segments representing different subcategories. Each bar still represents a primary categorical variable, but within each bar, different colors show the proportions of subcategories.
+
+Key Features of a Stacked Bar Chart:
+* The x-axis represents the main categorical variable.
+* The y-axis represents counts or a summary statistic.
+* Each bar is divided into subcategories, stacked on top of each other.
+* Colors differentiate the subcategories.
+
+**Example:** Stacked Bar Chart (Counts)
+
+This example shows how gender is distributed within each species in the Star Wars dataset.
+
+```{r}
+ggplot(starwars, aes(x = species, fill = gender)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
+```
+
+The `fill = gender` argument ensures that each bar is divided by gender.
+
+The stacked segments show how many characters of each gender exist within each species.
+
+**Example:** Proportional (100%) Stacked Bar Chart
+To visualize proportions instead of absolute counts, use `position = "fill"`, which makes each bar equal in height (100%) but displays the relative distribution of subcategories.
+
+```{r}
+ggplot(starwars, aes(x = species, fill = gender)) +
+  geom_bar(position = "fill") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+```
+
+
+* The y-axis now represents proportions (0 to 1) instead of raw counts.
+* This makes it easier to compare relative compositions across categories.
+
+### Box Plots
+
+A **box plot** (also called a box-and-whisker plot) is a statistical visualization that summarizes the distribution of a dataset by displaying key summary statistics. It is particularly useful for comparing distributions across multiple groups and identifying outliers.
+
+Key Components of a Box Plot:
+
+* Median (Q2): The middle value of the dataset (displayed as a bold line inside the box).
+* Interquartile Range (IQR): The range between the first quartile (Q1 - 25th percentile) and third quartile (Q3     * 75th percentile), represented by the box.
+* Whiskers: Lines extending from the box that indicate variability outside the upper and lower quartiles. The whiskers typically extend to 1.5 × IQR beyond Q1 and Q3.
+* Outliers: Individual points beyond the whiskers, representing extreme values in the data.
+
+*Example:* Basic Box Plot
+This example visualizes the distribution of character height in the Star Wars dataset.
+
+```{r}
+ggplot(starwars, aes(x = "", y = height)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  theme_minimal()
+```
+
+
+The box represents the IQR (middle 50% of the data).
+
+The whiskers extend to the smallest and largest values within 1.5 × IQR.
+
+Any points beyond the whiskers are outliers, shown as dots.
+
+**Example:** Grouped Box Plot
+
+To compare distributions across categories, such as height by gender:
+
+```{r}
+ggplot(starwars, aes(x = gender, y = height, fill = gender)) +
+  geom_boxplot() +
+  theme_minimal()
+```
+
+The x-axis represents different categories.
+
+Each box shows the distribution of height within a gender.
+
+Outliers (if present) appear as dots outside the whiskers.
+
+
+### Box Plot with Jittered Points
+
+To show individual data points alongside the box plot, we add `geom_jitter()`:
+
+```{r}
+ggplot(starwars, aes(x = gender, y = height, fill = gender)) +
+  geom_boxplot(alpha = 0.5) +
+  geom_jitter(color = "black", width = 0.2, alpha = 0.5) +
+  theme_minimal()
+```
+
+`geom_jitter()` spreads points horizontally to avoid overlap.
+
+This helps visualize density and distribution of observations.
+
+### Violin plots
+
+A **violin plot** is a data visualization that combines aspects of a box plot and a density plot, providing insights into the distribution and probability density of a dataset. It is particularly useful for visualizing variations across different categories while retaining information about the distribution shape.
+
+Key Features of a Violin Plot
+
+* Like a box plot, it displays median, quartiles, and outliers.
+* Unlike a box plot, it shows the full distribution of the data using a mirrored density curve.
+* The wider the violin, the greater the density of observations at that value.
+* The thinner areas indicate fewer data points in that range.
+
+```{r}
+ggplot(starwars, aes(x = "", y = height)) +
+  geom_violin(fill = "lightblue", color = "black") +
+  theme_minimal()
+```
+
+To compare height distributions by gender:
+
+```{r}
+ggplot(starwars, aes(x = gender, y = height, fill = gender)) +
+  geom_violin() +
+  theme_minimal()
+```
+
+The shape of each violin reveals how height varies within each gender.
+
+A wider section means more characters fall in that height range.
+
+### Violin + Box Plot Combination
+
+A box plot inside a violin plot provides both a summary (box plot) and detailed distribution (violin).
+
+```{r}
+ggplot(starwars, aes(x = gender, y = height, fill = gender)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme_minimal()
+```
+A box plot inside a violin plot provides both a summary (box plot) and detailed distribution (violin).
+
+
+Adding Jittered Points
+
+To see raw data points, we use `geom_jitter()`:
+
+```{r}
+ggplot(starwars, aes(x = gender, y = height, fill = gender)) +
+  geom_violin(alpha = 0.5) +
+  geom_jitter(color = "black", width = 0.2, alpha = 0.5) +
+  theme_minimal()
+```
+
+Jittered points avoid overlap, making individual data points visible.
+
+When to Use Violin Plots:
+
+✔ When comparing distributions across categories.
+✔ When the underlying shape of the data is important.
+✔ When you want to show both summary statistics and density.
+
+Not ideal for small sample sizes, as the density estimation may be misleading.
+
+### Mosaic Plot
+
+A mosaic plot is a graphical representation of contingency tables, showing the relationship between two or more categorical variables. It is an extension of a stacked bar chart, where both area and proportion convey information about the frequency distribution.
+
+Key Features of a Mosaic Plot
+* Displays contingency tables in a visual format.
+* The size of each rectangle represents the proportion of observations in that category.
+* Both row and column proportions are visually represented.
+* Ideal for categorical data and analyzing relationships between categories.
+
+```{r}
+# Load the required libraries
+library(ggplot2)
+library(ggmosaic)
+```
+
+**Example 1:** Creating a Basic Mosaic Plot
+We’ll use the built-in `Titanic` dataset, which contains survival data categorized by class, sex, and age.
+
+```{r}
+# Convert Titanic dataset into a data frame
+titanic_df <- as.data.frame(Titanic)
+
+# Basic mosaic plot: Passenger Class vs. Survival
+ggplot(data = titanic_df) +
+  geom_mosaic(aes(weight = Freq, x = product(Class), fill = Survived)) +
+  theme_minimal()
+```
+
+**Example 2:** Adding More Categories
+We can extend the mosaic plot to include both Passenger Class and Gender to show more relationships.
+
+```{r}
+ggplot(data = titanic_df) +
+  geom_mosaic(aes(weight = Freq, x = product(Class, Sex), fill = Survived)) +
+  theme_minimal()
+```
+
+Understanding the Mosaic Plot
+
+* Each rectangle represents a subgroup (e.g., Male First-Class, Female Third-Class).
+* The width of the sections corresponds to the frequency of observations in that category.
+* The colors (fill aesthetic) show survival status, allowing for quick interpretation of patterns.
+* Larger rectangles indicate more passengers in that category, while smaller rectangles show fewer passengers.
+
+When to Use a Mosaic Plot
+✔ When visualizing relationships between two or more categorical variables.
+✔ When looking at proportional relationships rather than raw counts.
+✔ When an alternative to stacked bar charts is needed for clearer interpretation.
+
+Not ideal for continuous data, as it only supports categorical variables.
+
+### Scatter plots
+
+A scatter plot is a visualization that displays the relationship between two numerical variables. Each point on the plot represents an observation, with the x-axis representing one variable and the y-axis representing another. Scatter plots are useful for identifying correlations, clusters, outliers, and trends in data.
+
+```{r}
+library(palmerpenguins)
+```
+
+#### Basic Scatter Plot: Flipper Length vs. Body Mass
+
+We start with a simple scatter plot showing the relationship between flipper length and body mass.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  labs(title = "Basic Scatter Plot: Flipper Length vs. Body Mass",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)")
+```
+
+#### Adding Aesthetics: Color by Species
+
+To make the visualization more insightful, we color the points by species.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
+  geom_point(size = 3) +
+  labs(title = "Scatter Plot with Color: Species Differentiation",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+Interpretation: Now we can see differences among species based on their body size and flipper length.
+
+#### Adding Shapes and Transparency
+
+We can add different shapes to differentiate sex and adjust transparency (alpha) to deal with overlapping points.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = sex)) +
+  geom_jitter(size = 3, alpha = 0.7, width = 2, height = 100) +  # Add jitter with slight adjustments
+  labs(title = "Scatter Plot with Jitter to Reduce Overlapping Points",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+#### Adding a Trend Line: Regression
+
+Now let’s add a regression line to visualize the trend in the relationship.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species, color = species, shape = sex), size = 3) +  # Color only for points
+  geom_smooth(method = "lm", se = FALSE, color = "black") +  # One regression line for all data
+  labs(title = "Scatter Plot with a Single Regression Line",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+#### Adding size
+
+We can size the point to scale with some other quantitative variable:
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species, color = species, shape = sex, size = bill_depth_mm)) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +  # One regression line for all data
+  labs(title = "Scatter Plot with a Single Regression Line",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+
+#### Using a LOESS Curve for Non-Linear Trends
+Instead of a linear trend, we can use a LOESS (locally estimated scatterplot smoothing) curve, which better captures complex relationships.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species, color = species, shape = sex, size = bill_depth_mm)) +
+  geom_smooth(method = "loess", se = TRUE, color = "black") +  # One regression line for all data
+  labs(title = "Scatter Plot with a Single Regression Line",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+#### Faceting: Creating Subplots for Each Species
+
+To further explore species differences, we facet the scatter plot into separate plots for each species.
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species), size = 3) +
+  geom_smooth(method = "loess", se = TRUE) +
+  facet_wrap(~ species) +
+  labs(title = "Faceted Scatter Plots by Species",
+       x = "Flipper Length (mm)",
+       y = "Body Mass (g)") +
+  theme_minimal()
+```
+
+
+## Back to World Bank data
+
+### Read data
+
+```{r}
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/R/R projects/raw2refined")
+## In the csv file ".." corresponds to missing data, so we use the 'na' argument to tell R that .. is missing data
+wb_data <- read_csv("data/c252e189-29d1-48ec-b29e-dbf778bb67d2_Data.csv", na = "..")
+
+# Next, we want to remove the rows where there is missing data
+## The na.omit function removes all the rows where there are "NA" (according to R, which is just NA)
+wb_data <- na.omit(wb_data)
+
+# Lets select only the columns that we need
+wb_data_vars <- wb_data %>% # This, %>% , is called the pipe operator, it's from dplyr and allows you to do multiple functions in one bit of code
+  select(`Country Name`, `Country Code`, `Series Name`, `2020 [YR2020]`)
+
+# These data are in long format and we want to transform to wide format
+## We use pivot_wider to transform to wide format
+## We tell it the columns that identify the unique observations, here country
+## We tell it the column that gives the names of the variables
+## We tell it the column that gives us the values that go along with variables
+wb_data_vars_wide <- pivot_wider(wb_data_vars, id_cols = c(`Country Name`, `Country Code`), 
+                                 names_from = `Series Name`,
+                                 values_from = `2020 [YR2020]`
+                                )
+## Now we have wb_data_vars_wide
+
+# We still have some missing values
+## Again, we remove any row that has at least one missing value
+wb_data_vars_wide_noNAs <- na.omit(wb_data_vars_wide)
+
+## Variable names are long and annoying
+wb_data_clean <- wb_data_vars_wide_noNAs %>%
+  mutate(
+    countryName = `Country Name`,
+    countryCode = `Country Code`,
+    gdpCurrentUSD = `GDP (current US$)`,
+    accessToElectricity = `Access to electricity (% of population)`,
+    malariaIncidence = `Incidence of malaria (per 1,000 population at risk)`,
+    schoolEnrollmentGPI = `School enrollment, primary (gross), gender parity index (GPI)`
+  ) %>%
+  select(-`Country Name`, -`Country Code`, -`GDP (current US$)`, 
+         -`Access to electricity (% of population)`, 
+         -`Incidence of malaria (per 1,000 population at risk)`, 
+         -`School enrollment, primary (gross), gender parity index (GPI)`) # Remove old names
+
+# Check updated column names
+names(wb_data_clean)
+
+
+# Read country metadata
+url <- "https://raw.githubusercontent.com/zhgarfield/raw2refined/main/data/country_metadata.csv"
+country_metadata <- read.csv(url, stringsAsFactors = FALSE)
+
+head(country_metadata)
+
+# Create new ID to match wb_data
+country_metadata$countryCode <- country_metadata$alpha.3
+
+# Merge data
+
+wb_data_clean <- left_join(wb_data_clean, country_metadata, by = "countryCode")
+```
+
+
+A nice ggplot:
+
+```{r, fig.width=10, fig.height=9}
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+# Clean dataset: Removing NAs and ensuring meaningful malaria incidence values
+# Clean dataset: Removing NAs and ensuring meaningful malaria incidence values
+wb_data_plot <- wb_data_clean %>%
+  filter(!is.na(gdpCurrentUSD), !is.na(accessToElectricity), !is.na(malariaIncidence)) %>%
+  mutate(
+    log_gdp = log10(gdpCurrentUSD),
+    malariaScaled = sqrt(malariaIncidence)  # Scaling malaria incidence for better visualization
+  )
+
+# Plot
+ggplot(wb_data_plot, aes(x = log_gdp, y = accessToElectricity, color = region, size = malariaScaled)) +
+  geom_point(alpha = 0.7) +  # Scatter points with transparency
+  geom_smooth(method = "loess", se = FALSE, color = "black", linetype = "dashed", size = 1) +  # LOESS trend line
+  scale_size_continuous(range = c(2, 10), name = "Malaria Incidence (scaled)") +  # Adjust point sizes
+  #scale_x_continuous() +  # Improve readability of GDP values
+  labs(
+    title = "GDP, Electricity Access, and Malaria Incidence",
+    subtitle = "Higher GDP correlates with electricity access, but malaria incidence varies",
+    x = "Log GDP (Current USD)",
+    y = "Access to Electricity (%)",
+    caption = "Data Source: World Bank"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    panel.grid.major = element_line(color = "grey90"),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 18),
+    plot.subtitle = element_text(hjust = 0.5, size = 14)
+  )
+
+```
