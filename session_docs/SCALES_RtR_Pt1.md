@@ -975,9 +975,7 @@ How can we tidy this dataset?
 
 <details>
 
-summary\>Answer
-
-</summary>
+<summary>Answer</summary>
 
 <p>To tidy this dataset, the `year` columns (`1999`, `2000`) should be
 gathered into a single column, with their corresponding values moved
