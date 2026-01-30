@@ -1,100 +1,215 @@
-##### Tidy Data Workshop: Student Script
-##### Professor Z. Garfield // FGSES // UM6P
+##### Raw to Refined (Session 1) — Student Follow-Along Script
+##### From Raw to Refined: Tidy Data in R
+##### Pr. Z. Garfield (student template updated)
 
-# -----------------------------------------------------------------------------------
-# 1. SETUP: Load Required Packages
-# -----------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# 0) Housekeeping
+# ------------------------------------------------------------------------------
 
-# Install required packages if they are not already installed
-for (pkg in c("tidyverse", "haven", "labelled", "readxl")) {
-  if (!requireNamespace(pkg, quietly = TRUE)) install.packages(pkg)
+# Tip: Run your script top-to-bottom during lecture.
+# When you see TODO blocks, pause and try to write the code yourself.
+# You can always compare with the “Hints” section at the end.
+
+# ------------------------------------------------------------------------------
+# 1) Setup: install + load packages
+# ------------------------------------------------------------------------------
+
+# Install required packages if missing
+pkgs <- c("tidyverse", "tidyr")
+for (p in pkgs) {
+  if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
 }
 
-# Load the libraries
 library(tidyverse)
-library(haven)
-library(labelled)
-library(readxl)
+library(tidyr)
 
-# -----------------------------------------------------------------------------------
-# 2. LOAD EXAMPLE DATASETS (UNTIDY)
-# -----------------------------------------------------------------------------------
+# Optional: keep printed tibbles from being too wide
+options(tibble.width = Inf)
 
-# Example 1: Public Health Data (Untidy Format)
-table2 <- tibble(
+# ------------------------------------------------------------------------------
+# 2) First contact: What do “tidy” example datasets look like?
+# ------------------------------------------------------------------------------
+
+# In tidyr, several example tables (table1, table2, ...) illustrate tidy vs untidy.
+# You can view the package index:
+# help(package = "tidyr")
+
+table1
+table2
+table3
+table4a
+table4b
+table5
+
+# Quick structure check
+str(table1)
+glimpse(table2)
+
+# ------------------------------------------------------------------------------
+# 3) Core tidy-data principles (Wickham 2014)
+# ------------------------------------------------------------------------------
+
+# In a tidy dataset:
+# 1) Each variable is a column
+# 2) Each observation is a row
+# 3) Each value is a cell
+# 4) Each type of observational unit forms a table (often useful in “real” data)
+
+# ------------------------------------------------------------------------------
+# 4) Data structure vs data concepts (semantics)
+# ------------------------------------------------------------------------------
+
+# Two datasets can contain the same underlying information but be “shaped” differently.
+# Example from lecture: treatments by person vs treatments as rows.
+
+# Structure A: people are rows; treatments are columns
+structure_a <- tibble(
+  name       = c("Mohammed", "Fatima Ezzahra", "Jean-Baptiste"),
+  treatmenta = c(NA, 16, 3),
+  treatmentb = c(2, 11, 1)
+)
+
+# Structure B: treatments are rows; people are columns
+structure_b <- tibble(
+  treatment        = c("treatmenta", "treatmentb"),
+  Mohammed         = c(NA, 2),
+  Fatima_Ezzahra   = c(16, 11),
+  Jean_Baptiste    = c(3, 1)
+)
+
+structure_a
+structure_b
+
+# TODO (in-class): What is the “unit of analysis” in structure_a? in structure_b?
+# Write your answer as comments below.
+# structure_a unit of analysis:
+# structure_b unit of analysis:
+
+# ------------------------------------------------------------------------------
+# 5) A small messy example → tidy (pivot_wider)
+# ------------------------------------------------------------------------------
+
+table_messy <- tibble(
   country = c("Afghanistan", "Afghanistan", "Brazil", "Brazil", "China", "China"),
-  year = c(1999, 1999, 2000, 2000, 1999, 1999),
-  type = c("cases", "population", "cases", "population", "cases", "population"),
-  count = c(745, 19987071, 37737, 174504898, 212258, 1272915272)
+  year    = c(1999, 1999, 2000, 2000, 1999, 1999),
+  type    = c("cases", "population", "cases", "population", "cases", "population"),
+  count   = c(745, 19987071, 37737, 174504898, 212258, 1272915272)
 )
 
-# Example 2: Economic Data (Untidy Format)
-table4b <- tibble(
-  country = c("Afghanistan", "Brazil", "China"),
-  `1999` = c(19987071, 172006362, 1272915272),
-  `2000` = c(20595360, 174504898, 1280428583)
-)
+table_messy
 
-# Example 3: Financial Data (Wide Format)
-morocco_debt <- read_excel("cleaned_MMF_debt_data.xlsx")
+# Diagnose: which tidy rules are violated?
+# TODO: Identify (a) variables, (b) observations, (c) values.
 
-# Example 4: Car Dataset (Wide Format)
-mtcars_data <- mtcars %>%
-  rownames_to_column(var = "car_name")
+# Make tidy: move type values into column names
+table_tidy <- table_messy %>%
+  pivot_wider(names_from = type, values_from = count)
 
-# -----------------------------------------------------------------------------------
-# 3. EXERCISE: IDENTIFY ISSUES IN THE DATASETS
-# -----------------------------------------------------------------------------------
+table_tidy
 
-# TODO: Write a brief explanation of why each dataset is untidy.
-# What is wrong with table2?
-table2_issue <- "table2 is untidy because..."
+# ------------------------------------------------------------------------------
+# 6) Diagnosing “untidy” patterns in tidyr tables
+# ------------------------------------------------------------------------------
 
-# What is wrong with table4b?
-table4b_issue <- "table4b is untidy because..."
+# Pattern A: “values in a column name” (wide years) -> table4a / table4b
+table4a
+table4b
 
-# What is wrong with morocco_debt?
-morocco_debt_issue <- "morocco_debt is untidy because..."
+# Pattern B: “variables in a single column” -> table2
+table2
 
-# What is wrong with mtcars_data?
-mtcars_data_issue <- "mtcars_data is untidy because..."
+# Pattern C: “multiple variables in one cell/column” -> table3 (rate is cases/pop)
+table3
 
-# -----------------------------------------------------------------------------------
-# 4. EXERCISE: TRANSFORM THESE DATASETS INTO A TIDY FORMAT
-# -----------------------------------------------------------------------------------
+# Pattern D: “variables split across columns” -> table5 (century + year)
+table5
 
-# TODO: Use pivot_longer() or pivot_wider() to tidy each dataset.
+# ------------------------------------------------------------------------------
+# 7) Fixing common untidy patterns (hands-on)
+# ------------------------------------------------------------------------------
 
-# 1. Transform table2 into a tidy format
-# table2_tidy <- ...
+# 7.1) table2 -> tidy with pivot_wider
+table2_tidy <- table2 %>%
+  pivot_wider(names_from = type, values_from = count)
 
-# 2. Transform table4b into a tidy format
-# table4b_tidy <- ...
+table2_tidy
 
-# 3. Transform morocco_debt into a tidy format
-# morocco_debt_tidy <- ...
+# Now computing a rate is easy:
+table2_tidy %>%
+  mutate(rate_per_10k = cases / population * 10000)
 
-# 4. Transform mtcars_data into a tidy format
-# mtcars_tidy <- ...
+# 7.2) table4a + table4b -> tidy with pivot_longer and join
+# table4a: cases by year columns; table4b: population by year columns
 
-# -----------------------------------------------------------------------------------
-# 5. ANALYSIS: DERIVE INSIGHTS FROM THE CLEAN DATA
-# -----------------------------------------------------------------------------------
+cases_long <- table4a %>%
+  pivot_longer(
+    cols      = -country,
+    names_to  = "year",
+    values_to = "cases"
+  ) %>%
+  mutate(year = as.integer(year))
 
-# TODO: Once your datasets are tidy, try summarizing or visualizing them.
-# For example, calculate total cases per year from table2:
-# summary_cases <- table2_tidy %>%
-#   group_by(year) %>%
-#   summarize(total_cases = sum(cases, na.rm = TRUE))
+pop_long <- table4b %>%
+  pivot_longer(
+    cols      = -country,
+    names_to  = "year",
+    values_to = "population"
+  ) %>%
+  mutate(year = as.integer(year))
 
-# TODO: Create a simple plot of debt trends over time
-# ggplot(morocco_debt_tidy, aes(x = Year, y = Value, color = DebtType)) +
-#   geom_line() +
-#   labs(title = "Moroccan Debt Over Time", x = "Year", y = "Debt (Millions)")
+cases_long
+pop_long
 
-# -----------------------------------------------------------------------------------
-# 6. FINAL THOUGHTS
-# -----------------------------------------------------------------------------------
+# Join them into a single tidy table (country-year as observation)
+table4_tidy <- cases_long %>%
+  left_join(pop_long, by = c("country", "year"))
 
-# TODO: Reflect on what you learned.
-final_reflection <- "The biggest challenge I faced was..."
+table4_tidy
+
+# 7.3) table3 -> tidy using separate
+# rate is stored as a character like "745/19987071"
+table3_tidy <- table3 %>%
+  separate(rate, into = c("cases", "population"), sep = "/", convert = TRUE)
+
+table3_tidy
+
+# 7.4) table5 -> tidy by uniting century + year into a single year
+# Here “19” + “99” should become 1999, etc.
+table5_tidy <- table5 %>%
+  unite("year_full", century, year, sep = "") %>%
+  mutate(year_full = as.integer(year_full)) %>%
+  separate(rate, into = c("cases", "population"), sep = "/", convert = TRUE)
+
+table5_tidy
+
+# ------------------------------------------------------------------------------
+# 8) Mini-exercises (do these during/after lecture)
+# ------------------------------------------------------------------------------
+
+# Exercise 1: Take structure_a and reshape it to a tidy “long” format with:
+# columns: name, treatment, value
+# Hint: pivot_longer() is your friend.
+
+# TODO: write code here
+# structure_a_long <- structure_a %>% ...
+# structure_a_long
+
+# Exercise 2: Starting from table4_tidy, compute:
+# (a) rate per 10,000, (b) a log10(population) variable
+# TODO: write code here
+# table4_tidy %>% ...
+
+# Exercise 3: In table2_tidy, filter to year == 2000 and arrange by cases (desc).
+# TODO: write code here
+# table2_tidy %>% ...
+
+# ------------------------------------------------------------------------------
+# 9) Hints (keep collapsed mentally; use only if stuck)
+# ------------------------------------------------------------------------------
+
+# Hint for Exercise 1:
+# structure_a_long <- structure_a %>%
+#   pivot_longer(cols = starts_with("treatment"),
+#                names_to = "treatment",
+#                values_to = "value")
+
